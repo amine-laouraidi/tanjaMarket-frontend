@@ -11,7 +11,7 @@ export async function GET() {
   const timestamp = Math.round(new Date().getTime() / 1000);
 
   const signature = cloudinary.utils.api_sign_request(
-    { timestamp, folder: "tanjamarket" },
+    { timestamp, folder: "tangamarket" },
     process.env.CLOUDINARY_API_SECRET,
   );
 

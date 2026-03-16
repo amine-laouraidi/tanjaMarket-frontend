@@ -1,11 +1,8 @@
 import { Poppins, Geist } from "next/font/google";
 import "@/assets/styles/main.css";
 import { cn } from "@/lib/utils";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -14,14 +11,12 @@ const poppins = Poppins({
 
 export const metadata = {};
 
-export default function MainLayout({ children }) {
+export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
+    <html lang="en" className={cn("font-sans", geist.variable, poppins.variable)}>
       <body className="font-sans antialiased flex flex-col min-h-screen">
-        <Navbar/>
-        <main className="flex-grow">{children}</main>
-        <Footer/>
+        {children}
       </body>
     </html>
-  );
+  )
 }
