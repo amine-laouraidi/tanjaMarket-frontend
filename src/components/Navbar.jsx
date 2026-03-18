@@ -51,7 +51,7 @@ export default function Navbar() {
           {/* Auth */}
           {!isLoggedIn ? (
             <Button variant="outline" asChild>
-              <Link href="/login">
+              <Link href="/auth/login">
                 <FiLogIn size={15} className="mr-2" />
                 Connexion
               </Link>
@@ -88,7 +88,7 @@ export default function Navbar() {
           <div className="h-px bg-border my-1" />
           {!isLoggedIn ? (
             <MobileItem
-              href="/login"
+              href="/auth/login"
               icon={<FiLogIn size={15} />}
               label="Connexion"
             />

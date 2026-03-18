@@ -1,27 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import {
-  RiEyeLine,
-  RiEyeOffLine,
   RiMailLine,
   RiLockLine,
 } from "react-icons/ri";
+import login from "@/app/actions/login";
+import { useActionState } from "react";
+const initialState = {};
 
 export default function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [form, setForm] = useState({ email: "", password: "" });
-
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: call your login API
-    console.log(form);
-  };
+  const [state, formAction, isPending] = useActionState(login, initialState);
 
   return (
     <div className="w-full max-w-[420px]">
@@ -36,7 +25,15 @@ export default function LoginForm() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form action={formAction} className="flex flex-col gap-4">
+
+          {/* Global error */}
+          {state.error?._form && (
+            <p className="text-[12px] text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+              {state.error._form}
+            </p>
+          )}
+
           {/* Email */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[11px] font-medium text-gray-600">
@@ -50,13 +47,13 @@ export default function LoginForm() {
               <input
                 type="email"
                 name="email"
-                value={form.email}
-                onChange={handleChange}
                 placeholder="votre@email.com"
-                required
                 className="w-full h-11 pl-9 pr-3 text-[13px] border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
               />
             </div>
+            {state.error?.email && (
+              <p className="text-[11px] text-red-500">{state.error.email}</p>
+            )}
           </div>
 
           {/* Password */}
@@ -78,34 +75,24 @@ export default function LoginForm() {
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               />
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 name="password"
-                value={form.password}
-                onChange={handleChange}
                 placeholder="••••••••"
-                required
                 className="w-full h-11 pl-9 pr-9 text-[13px] border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                {showPassword ? (
-                  <RiEyeOffLine size={14} />
-                ) : (
-                  <RiEyeLine size={14} />
-                )}
-              </button>
             </div>
+            {state.error?.password && (
+              <p className="text-[11px] text-red-500">{state.error.password}</p>
+            )}
           </div>
 
           {/* Submit */}
           <button
             type="submit"
-            className="w-full h-11 bg-blue-700 hover:bg-blue-800 active:scale-[0.98] text-white text-[13px] font-medium rounded-lg transition-all mt-1"
+            disabled={isPending}
+            className="w-full h-11 bg-blue-700 hover:bg-blue-800 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-white text-[13px] font-medium rounded-lg transition-all mt-1"
           >
-            Se connecter
+            {isPending ? "Connexion..." : "Se connecter"}
           </button>
         </form>
 
