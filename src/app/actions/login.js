@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { ACCESS_OPTS, REFRESH_OPTS } from "@/lib/cookie";
 
 const loginSchema = z.object({
   email: z
@@ -11,7 +12,6 @@ const loginSchema = z.object({
       (val) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val),
       "Veuillez fournir une adresse email valide",
     ),
-
   password: z
     .string()
     .min(1, "Le mot de passe est obligatoire")
@@ -46,15 +46,10 @@ export default async function login(prevState, formData) {
     if (!res.ok) {
       return { error: { _form: json.message ?? "Identifiants incorrects" } };
     }
-    // store accessToken on cookies
+
     const cookieStore = await cookies();
-    cookieStore.set("accessToken", json.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 15,
-      path: "/",
-    });
+    cookieStore.set("accessToken", json.accessToken, ACCESS_OPTS);
+    cookieStore.set("refreshToken", json.refreshToken, REFRESH_OPTS); 
   } catch (e) {
     if (e.cause?.code === "ECONNREFUSED") {
       return {
@@ -69,5 +64,6 @@ export default async function login(prevState, formData) {
       },
     };
   }
+
   return redirect("/");
 }

@@ -1,64 +1,74 @@
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { ACCESS_OPTS, REFRESH_OPTS } from "@/lib/cookie";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
+async function verifyToken(token) {
+  const { payload } = await jwtVerify(token, secret);
+  return payload;
+}
+
+function handleAuthenticatedAccess(pathname, payload, request) {
+  if (pathname.startsWith("/auth")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+  if (pathname.startsWith("/admin") && payload.role !== "admin") {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+  return NextResponse.next();
+}
+
+function isPublicRoute(pathname) {
+  return pathname === "/" || pathname.startsWith("/auth");
+}
+
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
-
-  if (pathname.startsWith("/auth")) {
-    const accessToken = request.cookies.get("accessToken")?.value;
-    if (!accessToken) return NextResponse.next(); 
-  }
-
   const accessToken = request.cookies.get("accessToken")?.value;
 
   if (accessToken) {
     try {
-      const { payload } = await jwtVerify(accessToken, secret); 
-
-      if (pathname.startsWith("/auth")) {
-        return NextResponse.redirect(new URL("/", request.url));
-      }
-      if (pathname.startsWith("/admin") && payload.role !== "admin") {
-        return NextResponse.redirect(new URL("/", request.url));
-      }
-      return NextResponse.next();
+      const payload = await verifyToken(accessToken);
+      return handleAuthenticatedAccess(pathname, payload, request);
     } catch (e) {
+      // expired or invalid — fall through to refresh
     }
   }
 
-  const res = await fetch(`${process.env.BACKEND_URL}/auth/refresh`, {
+  const refreshToken = request.cookies.get("refreshToken")?.value;
+
+  if (!refreshToken) {
+    if (isPublicRoute(pathname)) return NextResponse.next(); 
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
+
+  const refreshRes = await fetch(`${process.env.BACKEND_URL}/auth/refresh`, {
     method: "POST",
-    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refreshToken }),
   });
 
-  if (res.ok) {
-    const json = await res.json();
-    const { payload } = await jwtVerify(json.accessToken, secret);
+  if (!refreshRes.ok) {
+    const response = isPublicRoute(pathname)  
+      ? NextResponse.next()
+      : NextResponse.redirect(new URL("/auth/login", request.url));
 
-    if (pathname.startsWith("/auth")) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-    if (pathname.startsWith("/admin") && payload.role !== "admin") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-
-    const response = NextResponse.next();
-    response.cookies.set("accessToken", json.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 15,
-      path: "/",
-    });
+    response.cookies.delete("refreshToken");
     return response;
   }
 
-  if (pathname.startsWith("/auth")) return NextResponse.next();
-  return NextResponse.redirect(new URL("/auth/login", request.url));
+  const json = await refreshRes.json();
+  console.log(json);
+  const payload = await verifyToken(json.accessToken);
+
+  const response = handleAuthenticatedAccess(pathname, payload, request);
+  response.cookies.set("accessToken", json.accessToken, ACCESS_OPTS);
+  response.cookies.set("refreshToken", json.refreshToken, REFRESH_OPTS);
+
+return response;
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/auth/:path*"],
+matcher: ["/","/post", "/admin/:path*", "/auth/:path*"],
 };

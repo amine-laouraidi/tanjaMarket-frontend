@@ -1,28 +1,23 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
-  FiBookmark,
-  FiMenu,
-  FiX,
-  FiUser,
-  FiLogIn,
-  FiList,
-  FiHeart,
-  FiLogOut,
+  FiBookmark, FiMenu, FiX, FiUser,
+  FiLogIn, FiList, FiHeart, FiLogOut,
 } from "react-icons/fi";
+import { useUser } from "@/context/user-context";
+import logout from "@/app/actions/logout";
 
 const BOOKMARK_COUNT = 3;
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const user = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header className="border-b bg-background">
       <nav className="flex items-center justify-between px-6 h-[60px] max-w-7xl mx-auto">
-        {/* Logo */}
         <Link href="/" className="text-lg font-medium text-primary">
           TanjaMarket
         </Link>
@@ -30,8 +25,6 @@ export default function Navbar() {
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-2">
           <div className="w-px h-6 bg-border mx-1" />
-
-          {/* Bookmarks */}
           <Button variant="outline" size="icon" className="relative" asChild>
             <Link href="/favorites">
               <FiBookmark size={16} />
@@ -42,14 +35,10 @@ export default function Navbar() {
               )}
             </Link>
           </Button>
-
-          {/* Post Ad — always visible */}
           <Button asChild>
             <Link href="/post">+ Déposer</Link>
           </Button>
-
-          {/* Auth */}
-          {!isLoggedIn ? (
+          {!user ? (
             <Button variant="outline" asChild>
               <Link href="/auth/login">
                 <FiLogIn size={15} className="mr-2" />
@@ -57,7 +46,7 @@ export default function Navbar() {
               </Link>
             </Button>
           ) : (
-            <UserMenu />
+            <UserMenu user={user} />
           )}
         </div>
 
@@ -66,11 +55,7 @@ export default function Navbar() {
           <Button asChild size="sm">
             <Link href="/post">+ Déposer</Link>
           </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
+          <Button variant="outline" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <FiX size={16} /> : <FiMenu size={16} />}
           </Button>
         </div>
@@ -79,36 +64,20 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden border-t flex flex-col p-4 gap-1 bg-background">
-          <MobileItem
-            href="/favorites"
-            icon={<FiHeart size={15} />}
-            label="Favoris"
-            badge={BOOKMARK_COUNT}
-          />
+          <MobileItem href="/favorites" icon={<FiHeart size={15} />} label="Favoris" badge={BOOKMARK_COUNT} />
           <div className="h-px bg-border my-1" />
-          {!isLoggedIn ? (
-            <MobileItem
-              href="/auth/login"
-              icon={<FiLogIn size={15} />}
-              label="Connexion"
-            />
+          {!user ? (
+            <MobileItem href="/auth/login" icon={<FiLogIn size={15} />} label="Connexion" />
           ) : (
             <>
-              <MobileItem
-                href="/profile"
-                icon={<FiUser size={15} />}
-                label="Mon profil"
-              />
-              <MobileItem
-                href="/profile/listings"
-                icon={<FiList size={15} />}
-                label="Mes annonces"
-              />
-              <MobileItem
-                href="/logout"
-                icon={<FiLogOut size={15} />}
-                label="Déconnexion"
-              />
+              <MobileItem href="/profile" icon={<FiUser size={15} />} label="Mon profil" />
+              <MobileItem href="/profile/listings" icon={<FiList size={15} />} label="Mes annonces" />
+              <form action={logout}>
+                <button type="submit" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors w-full text-left text-destructive">
+                  <FiLogOut size={15} />
+                  Déconnexion
+                </button>
+              </form>
             </>
           )}
         </div>
@@ -117,40 +86,73 @@ export default function Navbar() {
   );
 }
 
+function UserMenu({ user }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  // close only when clicking outside the dropdown
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const initials = user?.fullName
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) ?? "?";
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-8 h-8 rounded-full bg-primary text-primary-foreground text-xs font-medium flex items-center justify-center hover:opacity-90 transition-opacity"
+      >
+        {initials}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-10 w-44 bg-background border rounded-lg shadow-md z-50 overflow-hidden">
+          <Link
+            href="/profile"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-secondary transition-colors"
+          >
+            <FiUser size={14} className="text-muted-foreground" />
+            Mon profil
+          </Link>
+          <div className="h-px bg-border" />
+          <form action={logout}>
+            <button
+              type="submit"
+              className="flex items-center gap-2 px-4 py-2.5 text-sm text-destructive hover:bg-secondary transition-colors w-full text-left"
+            >
+              <FiLogOut size={14} />
+              Déconnexion
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function MobileItem({ href, icon, label, badge }) {
   return (
-    <Link
-      href={href}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm
-        hover:bg-secondary transition-colors"
-    >
+    <Link href={href} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">
       <span className="text-muted-foreground">{icon}</span>
       {label}
       {badge > 0 && (
-        <span
-          className="ml-auto bg-amber-400 text-amber-900 text-[10px]
-          font-medium rounded-full px-2 py-0.5"
-        >
+        <span className="ml-auto bg-amber-400 text-amber-900 text-[10px] font-medium rounded-full px-2 py-0.5">
           {badge}
         </span>
       )}
     </Link>
-  );
-}
-
-function UserMenu() {
-  return (
-    <div className="flex items-center gap-2">
-      <Button variant="ghost" size="icon" asChild>
-        <Link href="/profile">
-          <div
-            className="w-7 h-7 rounded-full bg-primary text-primary-foreground
-            text-xs font-medium flex items-center justify-center"
-          >
-            AB
-          </div>
-        </Link>
-      </Button>
-    </div>
   );
 }
