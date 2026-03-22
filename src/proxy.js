@@ -59,7 +59,6 @@ export async function proxy(request) {
   }
 
   const json = await refreshRes.json();
-  console.log(json);
   const payload = await verifyToken(json.accessToken);
 
   const response = handleAuthenticatedAccess(pathname, payload, request);

@@ -1,16 +1,28 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import getMe from "@/lib/getMe";
-import { UserProvider } from "@/context/user-context";
+import { GlobalProvider } from "@/context/GlobalContext";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "sonner";
 
 export default async function MainLayout({ children }) {
   const user = await getMe();
 
+  let savedCount = 0;
+  if (user) {
+    const savedStatusRes = await authFetch(`/saved/count`);
+    const { count } = await savedStatusRes.json();
+    savedCount = count;
+  }
+
   return (
-    <UserProvider user={user}>
+    <GlobalProvider user={user} initialSavedCount={savedCount}>
       <Navbar />
-      <main className="flex-grow">{children}</main>
+      <TooltipProvider>
+        <main className="flex-grow">{children}</main>
+      </TooltipProvider>
+      <Toaster richColors position="bottom-right" />
       <Footer />
-    </UserProvider>
+    </GlobalProvider>
   );
 }

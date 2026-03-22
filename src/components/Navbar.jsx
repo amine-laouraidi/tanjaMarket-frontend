@@ -6,13 +6,13 @@ import {
   FiBookmark, FiMenu, FiX, FiUser,
   FiLogIn, FiList, FiHeart, FiLogOut,
 } from "react-icons/fi";
-import { useUser } from "@/context/user-context";
+import { useSavedCount, useUser } from "@/context/GlobalContext";
 import logout from "@/app/actions/logout";
 
-const BOOKMARK_COUNT = 3;
 
 export default function Navbar() {
   const user = useUser();
+  const [savedCount, setSavedCount] = useSavedCount();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -28,9 +28,9 @@ export default function Navbar() {
           <Button variant="outline" size="icon" className="relative" asChild>
             <Link href="/favorites">
               <FiBookmark size={16} />
-              {BOOKMARK_COUNT > 0 && (
+              {savedCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-amber-400 text-amber-900 text-[10px] font-medium rounded-full w-4 h-4 flex items-center justify-center">
-                  {BOOKMARK_COUNT}
+                  {savedCount}
                 </span>
               )}
             </Link>
@@ -64,7 +64,7 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden border-t flex flex-col p-4 gap-1 bg-background">
-          <MobileItem href="/favorites" icon={<FiHeart size={15} />} label="Favoris" badge={BOOKMARK_COUNT} />
+          <MobileItem href="/favorites" icon={<FiHeart size={15} />} label="Favoris" badge={savedCount} />
           <div className="h-px bg-border my-1" />
           {!user ? (
             <MobileItem href="/auth/login" icon={<FiLogIn size={15} />} label="Connexion" />

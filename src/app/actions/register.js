@@ -59,7 +59,7 @@ export default async function register(prevState, formData) {
     if (!res.ok) {
       return {
         error: {
-          _form: json.message ?? "Erreur lors de la création du compte",
+          _form: json.error ?? "Erreur lors de la création du compte",
         },
       };
     }

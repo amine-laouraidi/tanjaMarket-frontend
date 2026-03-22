@@ -2,19 +2,28 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { RiMapPin2Line, RiTimeLine, RiEyeLine, RiArrowLeftLine } from "react-icons/ri";
+import {
+  RiMapPin2Line,
+  RiTimeLine,
+  RiEyeLine,
+  RiArrowLeftLine,
+} from "react-icons/ri";
 import ImageGallery from "@/components/ImageGallery";
+import SaveAdButton from "@/components/SaveAdButton";
+import { authFetch } from "@/lib/authFetch";
 
 export default async function AdPage({ params }) {
-    const {id} = await params;
-  const res = await fetch(`${process.env.BACKEND_URL}/ads/${id}`, {
+  const { id } = await params;
+  const adRes = await fetch(`${process.env.BACKEND_URL}/ads/${id}`, {
     cache: "no-store",
   });
 
-  if (!res.ok) notFound();
+  const savedStatusRes = await authFetch(`/saved/check/${id}`);
+  const { isSaved } = await savedStatusRes.json();
 
-  const ad = await res.json();
-  console.log(res);
+  if (!adRes.ok) notFound();
+
+  const ad = await adRes.json();
 
   const timeAgo = formatDistanceToNow(new Date(ad.createdAt), {
     addSuffix: true,
@@ -25,7 +34,6 @@ export default async function AdPage({ params }) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
-
       {/* Back */}
       <Link
         href="/"
@@ -36,10 +44,8 @@ export default async function AdPage({ params }) {
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
         {/* ── Left: Images + Details ── */}
         <div className="lg:col-span-2 flex flex-col gap-5">
-
           {/* Image gallery */}
           <ImageGallery images={ad.images} title={ad.title} />
 
@@ -53,7 +59,13 @@ export default async function AdPage({ params }) {
                 {ad.subcategory?.name}
               </span>
             </div>
-            <h1 className="text-xl font-semibold">{ad.title}</h1>
+
+            {/* Title row with save button */}
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="text-xl font-semibold">{ad.title}</h1>
+              <SaveAdButton adId={id} initialSaved={isSaved} />
+            </div>
+
             <div className="flex flex-wrap items-center gap-4 mt-2 text-[12px] text-muted-foreground">
               {ad.location?.city && (
                 <span className="flex items-center gap-1">
@@ -92,7 +104,9 @@ export default async function AdPage({ params }) {
                     </p>
                     <p className="text-sm font-medium">
                       {typeof value === "boolean"
-                        ? value ? "Oui" : "Non"
+                        ? value
+                          ? "Oui"
+                          : "Non"
                         : String(value)}
                     </p>
                   </div>
@@ -104,7 +118,6 @@ export default async function AdPage({ params }) {
 
         {/* ── Right: Price + Contact ── */}
         <div className="flex flex-col gap-4">
-
           {/* Price card */}
           <div className="border rounded-xl p-4">
             <p className="text-2xl font-bold text-primary">
@@ -140,7 +153,9 @@ export default async function AdPage({ params }) {
               <div>
                 <p className="text-sm font-medium">{ad.user?.fullName}</p>
                 {ad.user?.phone && (
-                  <p className="text-[12px] text-muted-foreground">{ad.user.phone}</p>
+                  <p className="text-[12px] text-muted-foreground">
+                    {ad.user.phone}
+                  </p>
                 )}
               </div>
             </div>
@@ -149,10 +164,11 @@ export default async function AdPage({ params }) {
           {/* Safety tip */}
           <div className="bg-amber-50 border border-amber-100 rounded-xl p-4">
             <p className="text-[11px] text-amber-700 leading-relaxed">
-              <span className="font-semibold">Conseil de sécurité :</span> Ne payez jamais avant de voir l'article. Rencontrez le vendeur dans un lieu public.
+              <span className="font-semibold">Conseil de sécurité :</span> Ne
+              payez jamais avant de voir l'article. Rencontrez le vendeur dans
+              un lieu public.
             </p>
           </div>
-
         </div>
       </div>
     </div>

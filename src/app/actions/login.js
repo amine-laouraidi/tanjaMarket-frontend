@@ -44,7 +44,7 @@ export default async function login(prevState, formData) {
     const json = await res.json();
 
     if (!res.ok) {
-      return { error: { _form: json.message ?? "Identifiants incorrects" } };
+      return { error: { _form: json.error ?? "Identifiants incorrect" } };
     }
 
     const cookieStore = await cookies();
