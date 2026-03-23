@@ -12,12 +12,56 @@ import {
 } from "react-icons/ri";
 import register from "@/app/actions/register";
 import { useActionState } from "react";
+import { registerSchema } from "@/lib/UserValidationSchemas";
 
 const initialState = {};
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [state, formAction, isPending] = useActionState(register, initialState);
+  const [clientErrors, setClientErrors] = useState({});
+
+  function handleSubmit(e) {
+    const formData = new FormData(e.currentTarget);
+    const result = registerSchema.safeParse({
+      fullName: formData.get("fullName"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      password: formData.get("password"),
+    });
+
+    if (!result.success) {
+      e.preventDefault();
+      const errors = result.error.flatten().fieldErrors;
+      setClientErrors({
+        fullName: errors.fullName?.[0],
+        email: errors.email?.[0],
+        phone: errors.phone?.[0],
+        password: errors.password?.[0],
+      });
+      return;
+    }
+
+    setClientErrors({});
+  }
+
+  function clearField(field) {
+    setClientErrors((p) => ({ ...p, [field]: undefined }));
+  }
+
+  const errors = {
+    fullName: clientErrors.fullName ?? state.error?.fullName,
+    email: clientErrors.email ?? state.error?.email,
+    phone: clientErrors.phone ?? state.error?.phone,
+    password: clientErrors.password ?? state.error?.password,
+  };
+
+  const inputClass = (field) =>
+    `w-full h-11 pl-9 pr-3 text-[13px] border rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:bg-white transition-colors ${
+      errors[field]
+        ? "border-red-400 focus:border-red-400"
+        : "border-gray-200 focus:border-blue-500"
+    }`;
 
   return (
     <div className="w-full max-w-[420px]">
@@ -32,8 +76,7 @@ export default function RegisterForm() {
           </p>
         </div>
 
-        <form action={formAction} className="flex flex-col gap-4">
-
+        <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Global error */}
           {state.error?._form && (
             <p className="text-[12px] text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
@@ -43,9 +86,7 @@ export default function RegisterForm() {
 
           {/* Full Name */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-medium text-gray-600">
-              Nom complet
-            </label>
+            <label className="text-[11px] font-medium text-gray-600">Nom complet</label>
             <div className="relative">
               <RiUserLine
                 size={14}
@@ -56,19 +97,18 @@ export default function RegisterForm() {
                 name="fullName"
                 placeholder="Sara Mourad"
                 maxLength={50}
-                className="w-full h-11 pl-9 pr-3 text-[13px] border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
+                onChange={() => clearField("fullName")}
+                className={inputClass("fullName")}
               />
             </div>
-            {state.error?.fullName && (
-              <p className="text-[11px] text-red-500">{state.error.fullName}</p>
+            {errors.fullName && (
+              <p className="text-[11px] text-red-500">{errors.fullName}</p>
             )}
           </div>
 
           {/* Email */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-medium text-gray-600">
-              Email
-            </label>
+            <label className="text-[11px] font-medium text-gray-600">Email</label>
             <div className="relative">
               <RiMailLine
                 size={14}
@@ -78,19 +118,18 @@ export default function RegisterForm() {
                 type="email"
                 name="email"
                 placeholder="votre@email.com"
-                className="w-full h-11 pl-9 pr-3 text-[13px] border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
+                onChange={() => clearField("email")}
+                className={inputClass("email")}
               />
             </div>
-            {state.error?.email && (
-              <p className="text-[11px] text-red-500">{state.error.email}</p>
+            {errors.email && (
+              <p className="text-[11px] text-red-500">{errors.email}</p>
             )}
           </div>
 
           {/* Phone */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-medium text-gray-600">
-              Téléphone
-            </label>
+            <label className="text-[11px] font-medium text-gray-600">Téléphone</label>
             <div className="relative">
               <RiPhoneLine
                 size={14}
@@ -100,19 +139,18 @@ export default function RegisterForm() {
                 type="tel"
                 name="phone"
                 placeholder="+212 6XX XXX XXX"
-                className="w-full h-11 pl-9 pr-3 text-[13px] border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
+                onChange={() => clearField("phone")}
+                className={inputClass("phone")}
               />
             </div>
-            {state.error?.phone && (
-              <p className="text-[11px] text-red-500">{state.error.phone}</p>
+            {errors.phone && (
+              <p className="text-[11px] text-red-500">{errors.phone}</p>
             )}
           </div>
 
           {/* Password */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-medium text-gray-600">
-              Mot de passe
-            </label>
+            <label className="text-[11px] font-medium text-gray-600">Mot de passe</label>
             <div className="relative">
               <RiLockLine
                 size={14}
@@ -123,7 +161,12 @@ export default function RegisterForm() {
                 name="password"
                 placeholder="••••••••"
                 minLength={6}
-                className="w-full h-11 pl-9 pr-9 text-[13px] border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
+                onChange={() => clearField("password")}
+                className={`w-full h-11 pl-9 pr-9 text-[13px] border rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:bg-white transition-colors ${
+                  errors.password
+                    ? "border-red-400 focus:border-red-400"
+                    : "border-gray-200 focus:border-blue-500"
+                }`}
               />
               <button
                 type="button"
@@ -133,8 +176,8 @@ export default function RegisterForm() {
                 {showPassword ? <RiEyeOffLine size={14} /> : <RiEyeLine size={14} />}
               </button>
             </div>
-            {state.error?.password && (
-              <p className="text-[11px] text-red-500">{state.error.password}</p>
+            {errors.password && (
+              <p className="text-[11px] text-red-500">{errors.password}</p>
             )}
           </div>
 
@@ -153,7 +196,9 @@ export default function RegisterForm() {
           En créant un compte vous acceptez nos{" "}
           <Link href="/cgu" className="text-blue-700 hover:underline">CGU</Link>{" "}
           et notre{" "}
-          <Link href="/privacy" className="text-blue-700 hover:underline">politique de confidentialité</Link>
+          <Link href="/privacy" className="text-blue-700 hover:underline">
+            politique de confidentialité
+          </Link>
         </p>
 
         {/* Footer */}

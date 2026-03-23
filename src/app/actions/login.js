@@ -1,22 +1,9 @@
 "use server";
+
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { z } from "zod";
 import { ACCESS_OPTS, REFRESH_OPTS } from "@/lib/cookie";
-
-const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, "L'adresse email est obligatoire")
-    .refine(
-      (val) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val),
-      "Veuillez fournir une adresse email valide",
-    ),
-  password: z
-    .string()
-    .min(1, "Le mot de passe est obligatoire")
-    .min(6, "Le mot de passe doit contenir au moins 6 caractères"),
-});
+import { loginSchema } from "@/lib/UserValidationSchemas";
 
 export default async function login(prevState, formData) {
   const result = loginSchema.safeParse({
@@ -44,12 +31,12 @@ export default async function login(prevState, formData) {
     const json = await res.json();
 
     if (!res.ok) {
-      return { error: { _form: json.error ?? "Identifiants incorrect" } };
+      return { error: { _form: json.error ?? "Identifiants incorrects" } };
     }
 
     const cookieStore = await cookies();
     cookieStore.set("accessToken", json.accessToken, ACCESS_OPTS);
-    cookieStore.set("refreshToken", json.refreshToken, REFRESH_OPTS); 
+    cookieStore.set("refreshToken", json.refreshToken, REFRESH_OPTS);
   } catch (e) {
     if (e.cause?.code === "ECONNREFUSED") {
       return {
@@ -65,5 +52,5 @@ export default async function login(prevState, formData) {
     };
   }
 
-  return redirect("/");
+  redirect("/");
 }

@@ -1,16 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import {
-  RiMailLine,
-  RiLockLine,
-} from "react-icons/ri";
+import { RiMailLine, RiLockLine } from "react-icons/ri";
 import login from "@/app/actions/login";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { loginSchema } from "@/lib/UserValidationSchemas";
+
 const initialState = {};
 
 export default function LoginForm() {
   const [state, formAction, isPending] = useActionState(login, initialState);
+  const [clientErrors, setClientErrors] = useState({});
+
+  function handleSubmit(e) {
+    const formData = new FormData(e.currentTarget);
+    const result = loginSchema.safeParse({
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
+
+    if (!result.success) {
+      e.preventDefault();
+      const errors = result.error.flatten().fieldErrors;
+      setClientErrors({
+        email: errors.email?.[0],
+        password: errors.password?.[0],
+      });
+      return;
+    }
+
+    setClientErrors({});
+  }
+
+  const errors = {
+    email: clientErrors.email ?? state.error?.email,
+    password: clientErrors.password ?? state.error?.password,
+  };
 
   return (
     <div className="w-full max-w-[420px]">
@@ -25,8 +50,7 @@ export default function LoginForm() {
           </p>
         </div>
 
-        <form action={formAction} className="flex flex-col gap-4">
-
+        <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Global error */}
           {state.error?._form && (
             <p className="text-[12px] text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
@@ -36,9 +60,7 @@ export default function LoginForm() {
 
           {/* Email */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-medium text-gray-600">
-              Email
-            </label>
+            <label className="text-[11px] font-medium text-gray-600">Email</label>
             <div className="relative">
               <RiMailLine
                 size={14}
@@ -48,11 +70,16 @@ export default function LoginForm() {
                 type="email"
                 name="email"
                 placeholder="votre@email.com"
-                className="w-full h-11 pl-9 pr-3 text-[13px] border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
+                onChange={() => setClientErrors((p) => ({ ...p, email: undefined }))}
+                className={`w-full h-11 pl-9 pr-3 text-[13px] border rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:bg-white transition-colors ${
+                  errors.email
+                    ? "border-red-400 focus:border-red-400"
+                    : "border-gray-200 focus:border-blue-500"
+                }`}
               />
             </div>
-            {state.error?.email && (
-              <p className="text-[11px] text-red-500">{state.error.email}</p>
+            {errors.email && (
+              <p className="text-[11px] text-red-500">{errors.email}</p>
             )}
           </div>
 
@@ -78,11 +105,16 @@ export default function LoginForm() {
                 type="password"
                 name="password"
                 placeholder="••••••••"
-                className="w-full h-11 pl-9 pr-9 text-[13px] border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
+                onChange={() => setClientErrors((p) => ({ ...p, password: undefined }))}
+                className={`w-full h-11 pl-9 pr-9 text-[13px] border rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:bg-white transition-colors ${
+                  errors.password
+                    ? "border-red-400 focus:border-red-400"
+                    : "border-gray-200 focus:border-blue-500"
+                }`}
               />
             </div>
-            {state.error?.password && (
-              <p className="text-[11px] text-red-500">{state.error.password}</p>
+            {errors.password && (
+              <p className="text-[11px] text-red-500">{errors.password}</p>
             )}
           </div>
 
@@ -106,10 +138,7 @@ export default function LoginForm() {
         {/* Footer */}
         <p className="text-center text-[12px] text-gray-400">
           Pas encore de compte ?{" "}
-          <Link
-            href="/auth/register"
-            className="text-blue-700 font-medium hover:underline"
-          >
+          <Link href="/auth/register" className="text-blue-700 font-medium hover:underline">
             Créer un compte
           </Link>
         </p>
