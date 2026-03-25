@@ -30,11 +30,14 @@ export const postAdSchema = z.object({
     .optional(),
 
   images: z
-    .array(z.string(), {
-      invalid_type_error: "Les images doivent être un tableau d'URLs",
-    })
-    .max(10, "Vous pouvez télécharger 10 images maximum")
-    .optional(),
+    .array(
+      z.object({
+        url: z.string(),
+        public_id: z.string(),
+      }),
+    )
+    .min(1, "Veuillez ajouter au moins une photo")
+    .max(10, "Vous pouvez télécharger 10 images maximum"),
 
   category: z.string().min(1, "Veuillez sélectionner une catégorie"),
 

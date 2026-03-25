@@ -4,8 +4,8 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import SaveAdButton from "./SaveAdButton";
 
-export default function AdCard({ ad, initialSaved = false, showUnsave = false }) {
-  const firstImage = ad.images?.[0];
+export default function AdCard({ ad, initialSaved = false, showUnsave = false,onUnsave }) {
+  const firstImage = ad.images?.[0]?.url;
 
   const timeAgo = formatDistanceToNow(new Date(ad.createdAt), {
     addSuffix: true,
@@ -16,7 +16,12 @@ export default function AdCard({ ad, initialSaved = false, showUnsave = false })
     <div className="group relative border rounded-xl overflow-hidden hover:border-foreground/20 hover:shadow-sm transition-all bg-background">
       {/* Save button — top right corner */}
       <div className="absolute top-2 right-2 z-10">
-        <SaveAdButton adId={ad._id} initialSaved={initialSaved} showUnsave={showUnsave} />
+        <SaveAdButton
+          adId={ad._id}
+          initialSaved={initialSaved}
+          showUnsave={showUnsave}
+          onUnsave={onUnsave}
+        />
       </div>
 
       <Link href={`/listings/${ad._id}`} className="block">
@@ -50,7 +55,7 @@ export default function AdCard({ ad, initialSaved = false, showUnsave = false })
           </span>
           <p className="text-sm font-medium truncate pr-1">{ad.title}</p>
           <p className="text-base font-semibold text-primary mt-1">
-            {ad.price.toLocaleString("fr-MA")} MAD
+             {ad.price.toLocaleString("fr-MA")} MAD
           </p>
           <div className="flex justify-between items-center mt-2">
             <span className="text-[11px] text-muted-foreground">

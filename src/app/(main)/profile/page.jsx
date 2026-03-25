@@ -9,7 +9,7 @@ export const metadata = {
 
 export default async function ProfilePage() {
   const user = await getMe();
-
+  console.log(user);
   return (
     <div className="min-h-screen bg-muted/30">
       <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">

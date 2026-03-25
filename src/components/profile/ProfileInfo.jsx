@@ -13,10 +13,7 @@ export default function ProfileInfo({ user }) {
   const [state, formAction, isPending] = useActionState(updateProfile, initialState);
   const [clientErrors, setClientErrors] = useState({});
 
-  useEffect(() => {
-    if (state.success) toast.success("Profil mis à jour avec succès !");
-    if (state.error) toast.error(state.error);
-  }, [state]);
+
 
   function handleSubmit(e) {
     const formData = new FormData(e.currentTarget);

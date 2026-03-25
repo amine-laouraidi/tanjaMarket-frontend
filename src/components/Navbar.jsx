@@ -9,7 +9,6 @@ import {
 import { useSavedCount, useUser } from "@/context/GlobalContext";
 import logout from "@/app/actions/logout";
 
-
 export default function Navbar() {
   const user = useUser();
   const [savedCount, setSavedCount] = useSavedCount();
@@ -26,7 +25,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-2">
           <div className="w-px h-6 bg-border mx-1" />
           <Button variant="outline" size="icon" className="relative" asChild>
-            <Link href="/favorites">
+            <Link href="/saved">
               <FiBookmark size={16} />
               {savedCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-amber-400 text-amber-900 text-[10px] font-medium rounded-full w-4 h-4 flex items-center justify-center">
@@ -64,14 +63,14 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden border-t flex flex-col p-4 gap-1 bg-background">
-          <MobileItem href="/favorites" icon={<FiHeart size={15} />} label="Favoris" badge={savedCount} />
+          <MobileItem href="/saved" icon={<FiHeart size={15} />} label="Favoris" badge={savedCount} />
           <div className="h-px bg-border my-1" />
           {!user ? (
             <MobileItem href="/auth/login" icon={<FiLogIn size={15} />} label="Connexion" />
           ) : (
             <>
               <MobileItem href="/profile" icon={<FiUser size={15} />} label="Mon profil" />
-              <MobileItem href="/profile/listings" icon={<FiList size={15} />} label="Mes annonces" />
+              <MobileItem href="/profile/ads" icon={<FiList size={15} />} label="Mes annonces" />
               <form action={logout}>
                 <button type="submit" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors w-full text-left text-destructive">
                   <FiLogOut size={15} />
@@ -90,7 +89,6 @@ function UserMenu({ user }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
-  // close only when clicking outside the dropdown
   useEffect(() => {
     function handleClickOutside(e) {
       if (ref.current && !ref.current.contains(e.target)) {
@@ -126,6 +124,14 @@ function UserMenu({ user }) {
           >
             <FiUser size={14} className="text-muted-foreground" />
             Mon profil
+          </Link>
+          <Link
+            href="/profile/ads"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-secondary transition-colors"
+          >
+            <FiList size={14} className="text-muted-foreground" />
+            Mes annonces
           </Link>
           <div className="h-px bg-border" />
           <form action={logout}>

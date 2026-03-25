@@ -69,5 +69,5 @@ return response;
 }
 
 export const config = {
-matcher: ["/","/post", "/admin/:path*", "/auth/:path*"],
+matcher: ["/","/post","/saved","/profile/:path*", "/admin/:path*", "/auth/:path*"],
 };

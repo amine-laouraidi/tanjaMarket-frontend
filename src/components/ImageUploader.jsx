@@ -28,7 +28,8 @@ const ImageUploader = forwardRef(function ImageUploader({ error }, ref) {
               { method: "POST", body: fd }
             );
             const data = await res.json();
-            return data.secure_url;
+            
+            return { url: data.secure_url, public_id: data.public_id };
           })
         );
         return urls;

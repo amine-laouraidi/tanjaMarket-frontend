@@ -5,7 +5,7 @@ import { authFetch } from "@/lib/authFetch";
 import getMe from "@/lib/getMe";
 import { postAdSchema } from "@/lib/postAdSchema";
 
-export default async function postAd(data) {
+export default async function updateAd(adId, data) {
   const cleaned = {
     ...data,
     description: data.description || undefined,
@@ -34,7 +34,7 @@ export default async function postAd(data) {
 
   const me = await getMe();
   if (!me?._id) {
-    return { error: { _form: "Vous devez être connecté pour publier une annonce" } };
+    return { error: { _form: "Vous devez être connecté pour modifier une annonce" } };
   }
 
   const payload = {
@@ -46,23 +46,22 @@ export default async function postAd(data) {
     subcategory: result.data.subcategory,
     location: result.data.location,
     images: result.data.images,
-    user: me._id,
     fields: result.data.fields,
+    removedPublicIds: data.removedPublicIds ?? [],
   };
 
   try {
-    const res = await authFetch("/ads", {
-      method: "POST",
+    const res = await authFetch(`/ads/${adId}`, {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
     const json = await res.json();
-    console.log(json);
+
     if (!res.ok) {
-      return { error: { _form: json.error ?? "Erreur lors de la publication de l'annonce" } };
+      return { error: { _form: json.error ?? "Erreur lors de la modification de l'annonce" } };
     }
-    
   } catch (e) {
     if (e.cause?.code === "ECONNREFUSED") {
       return { error: { _form: "Le serveur est inaccessible, veuillez réessayer plus tard" } };
@@ -70,5 +69,5 @@ export default async function postAd(data) {
     return { error: { _form: "Une erreur inattendue s'est produite, veuillez réessayer" } };
   }
 
-  redirect("/");
+  redirect(`/listings/${adId}`);
 }

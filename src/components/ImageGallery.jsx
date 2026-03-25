@@ -17,7 +17,7 @@ export default function ImageGallery({ images = [], title }) {
     );
   }
 
-  const slides = images.map((src) => ({ src }));
+  const slides = images.map((img) => ({ src: img.url}));
 
   return (
     <div className="flex flex-col gap-2">
@@ -30,7 +30,7 @@ export default function ImageGallery({ images = [], title }) {
         }}
       >
         <Image
-          src={images[0]}
+          src={images[0].url}
           alt={title}
           fill
           loading="eager"
@@ -62,7 +62,7 @@ export default function ImageGallery({ images = [], title }) {
               }`}
             >
               <Image
-                src={src}
+                src={src.url}
                 alt={`${title} ${i + 1}`}
                 fill
                 className="object-cover"

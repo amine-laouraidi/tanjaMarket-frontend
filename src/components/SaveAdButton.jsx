@@ -12,10 +12,9 @@ import { toast } from "sonner";
 import saveAd from "@/app/actions/saveAd";
 import { useSavedCount, useUser } from "@/context/GlobalContext";
 
-export default function SaveAdButton({ adId, initialSaved, showUnsave = false }) {
+export default function SaveAdButton({ adId, initialSaved, onUnsave }) {
   const [isSaved, setIsSaved] = useState(initialSaved);
   const [animating, setAnimating] = useState(false);
-  const [removed, setRemoved] = useState(false);
   const user = useUser();
   const [savedCount, setSavedCount] = useSavedCount();
 
@@ -36,15 +35,12 @@ export default function SaveAdButton({ adId, initialSaved, showUnsave = false })
         toast.success("Annonce retirée des favoris");
         setIsSaved(false);
         setSavedCount((prev) => prev - 1);
-        // If we're on the saved page, fade out the card
-        if (showUnsave) setRemoved(true);
+        onUnsave?.();
       }
     } catch (e) {
       toast.error("Une erreur s'est produite");
     }
   };
-
-  if (removed) return null;
 
   return (
     <Tooltip delayDuration={200}>

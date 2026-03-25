@@ -4,6 +4,7 @@ import getMe from "@/lib/getMe";
 import { GlobalProvider } from "@/context/GlobalContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "sonner";
+import { authFetch } from "@/lib/authFetch";
 
 export default async function MainLayout({ children }) {
   const user = await getMe();
