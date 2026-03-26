@@ -1,15 +1,15 @@
 "use server";
-
+import cloudinary from "@/lib/cloudinary";
 import { redirect } from "next/navigation";
 import { authFetch } from "@/lib/authFetch";
 import getMe from "@/lib/getMe";
 import { postAdSchema } from "@/lib/postAdSchema";
 
+
 export default async function updateAd(adId, data) {
   const cleaned = {
     ...data,
     description: data.description || undefined,
-    phone: data.phone || undefined,
     location: {
       address: data.address || undefined,
       city: data.city || "Tanger",
@@ -37,6 +37,12 @@ export default async function updateAd(adId, data) {
     return { error: { _form: "Vous devez être connecté pour modifier une annonce" } };
   }
 
+  if (data.removedPublicIds?.length) {
+    await Promise.all(
+      data.removedPublicIds.map((id) => cloudinary.uploader.destroy(id))
+    );
+  }
+
   const payload = {
     title: result.data.title,
     description: result.data.description,
@@ -47,7 +53,6 @@ export default async function updateAd(adId, data) {
     location: result.data.location,
     images: result.data.images,
     fields: result.data.fields,
-    removedPublicIds: data.removedPublicIds ?? [],
   };
 
   try {

@@ -19,7 +19,9 @@ export default async function AdPage({ params }) {
   });
 
   const savedStatusRes = await authFetch(`/saved/check/${id}`);
-  const { isSaved } = await savedStatusRes.json();
+  const isSaved = savedStatusRes?.ok
+    ? (await savedStatusRes.json()).isSaved
+    : false;
 
   if (!adRes.ok) notFound();
 

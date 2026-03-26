@@ -9,6 +9,14 @@ async function verifyToken(token) {
   return payload;
 }
 
+function isPublicRoute(pathname) {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/listings")
+  );
+}
+
 function handleAuthenticatedAccess(pathname, payload, request) {
   if (pathname.startsWith("/auth")) {
     return NextResponse.redirect(new URL("/", request.url));
@@ -17,10 +25,6 @@ function handleAuthenticatedAccess(pathname, payload, request) {
     return NextResponse.redirect(new URL("/", request.url));
   }
   return NextResponse.next();
-}
-
-function isPublicRoute(pathname) {
-  return pathname === "/" || pathname.startsWith("/auth");
 }
 
 export async function proxy(request) {
@@ -39,7 +43,7 @@ export async function proxy(request) {
   const refreshToken = request.cookies.get("refreshToken")?.value;
 
   if (!refreshToken) {
-    if (isPublicRoute(pathname)) return NextResponse.next(); 
+    if (isPublicRoute(pathname)) return NextResponse.next();
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
@@ -50,7 +54,7 @@ export async function proxy(request) {
   });
 
   if (!refreshRes.ok) {
-    const response = isPublicRoute(pathname)  
+    const response = isPublicRoute(pathname)
       ? NextResponse.next()
       : NextResponse.redirect(new URL("/auth/login", request.url));
 
@@ -65,9 +69,9 @@ export async function proxy(request) {
   response.cookies.set("accessToken", json.accessToken, ACCESS_OPTS);
   response.cookies.set("refreshToken", json.refreshToken, REFRESH_OPTS);
 
-return response;
+  return response;
 }
 
 export const config = {
-matcher: ["/","/post","/saved","/profile/:path*", "/admin/:path*", "/auth/:path*"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

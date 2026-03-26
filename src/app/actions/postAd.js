@@ -9,7 +9,6 @@ export default async function postAd(data) {
   const cleaned = {
     ...data,
     description: data.description || undefined,
-    phone: data.phone || undefined,
     location: {
       address: data.address || undefined,
       city: data.city || "Tanger",
@@ -32,11 +31,6 @@ export default async function postAd(data) {
     };
   }
 
-  const me = await getMe();
-  if (!me?._id) {
-    return { error: { _form: "Vous devez être connecté pour publier une annonce" } };
-  }
-
   const payload = {
     title: result.data.title,
     description: result.data.description,
@@ -46,7 +40,6 @@ export default async function postAd(data) {
     subcategory: result.data.subcategory,
     location: result.data.location,
     images: result.data.images,
-    user: me._id,
     fields: result.data.fields,
   };
 
@@ -58,7 +51,6 @@ export default async function postAd(data) {
     });
 
     const json = await res.json();
-    console.log(json);
     if (!res.ok) {
       return { error: { _form: json.error ?? "Erreur lors de la publication de l'annonce" } };
     }

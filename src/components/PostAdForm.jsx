@@ -22,7 +22,7 @@ const STEPS = [
   { number: 3, label: "Localisation" },
 ];
 
-export default function PostAdForm({ categories, subcategories, apiUrl }) {
+export default function PostAdForm({ categories, subcategories ,defaultPhone }) {
   const [step, setStep] = useState(1);
   const [fieldErrors, setFieldErrors] = useState({});
   const [serverError, setServerError] = useState(null);
@@ -40,7 +40,7 @@ export default function PostAdForm({ categories, subcategories, apiUrl }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(defaultPhone);
 
   // Step 3
   const [address, setAddress] = useState("");
@@ -80,7 +80,7 @@ export default function PostAdForm({ categories, subcategories, apiUrl }) {
         title,
         description: description || undefined,
         price: Number(price),
-        phone: phone || undefined,
+        phone: phone,
       });
     }
 
@@ -319,7 +319,6 @@ export default function PostAdForm({ categories, subcategories, apiUrl }) {
 
               <DynamicFields
                 subcategoryId={selectedSubcategory}
-                apiUrl={apiUrl}
                 values={dynamicValues}
                 onChange={(name, value) =>
                   setDynamicValues((prev) => ({ ...prev, [name]: value }))
@@ -383,7 +382,7 @@ export default function PostAdForm({ categories, subcategories, apiUrl }) {
                   </div>
                 </Field>
 
-                <Field label="Téléphone" error={fieldErrors.phone}>
+                <Field label="Téléphone" required error={fieldErrors.phone}>
                   <div className="relative">
                     <RiPhoneLine
                       size={14}

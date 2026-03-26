@@ -26,9 +26,7 @@ export const postAdSchema = z.object({
     .regex(
       /^(\+212|0)([ \-]?\d){9}$/,
       "Veuillez entrer un numéro de téléphone marocain valide (ex: 0612345678)",
-    )
-    .optional(),
-
+    ),
   images: z
     .array(
       z.object({

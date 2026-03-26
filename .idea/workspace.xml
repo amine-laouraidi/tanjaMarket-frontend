@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="6b656ecb-6d23-412a-b72d-884552f017da" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/listings/[id]/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/listings/[id]/page.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/post/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/post/page.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/actions/postAd.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/actions/postAd.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/actions/updateAd.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/actions/updateAd.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/sign-upload/route.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/sign-upload/route.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PostAdForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PostAdForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/postAdSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/postAdSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/proxy.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/proxy.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="3BUXzqKGYVcaQvRDiQgKGdENX86" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "git-widget-placeholder": "master",
+    "js.debugger.nextJs.config.created.client": "true",
+    "js.debugger.nextJs.config.created.server": "true",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="npm.Next.js: server-side">
+    <configuration name="Next.js: debug client-side" type="JavascriptDebugType" uri="http://localhost:3000/">
+      <method v="2" />
+    </configuration>
+    <configuration name="Next.js: server-side" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-cffe25b9f5b3-intellij.indexing.shared.core-IU-253.28294.334" />
+        <option value="bundled-js-predefined-d6986cc7102b-c7e53b3be11b-JavaScript-IU-253.28294.334" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6b656ecb-6d23-412a-b72d-884552f017da" name="Changes" comment="" />
+      <created>1774544892451</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1774544892451</updated>
+      <workItem from="1774544893014" duration="51000" />
+    </task>
+    <servers />
+  </component>
+</project>
