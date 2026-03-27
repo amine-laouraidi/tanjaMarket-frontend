@@ -1,24 +1,25 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { createCategoryAction } from "@/app/actions/adminCatalog";
+import { createCategoryAction, updateCategoryAction } from "@/app/actions/adminCatalog";
 import { toast } from "sonner";
-import { RiAddLine, RiCheckLine } from "react-icons/ri";
+import { RiCheckLine, RiSaveLine, RiAddLine } from "react-icons/ri";
 
-export default function CategoryForm({ onCreated, category }) {
-  const [state, action, isPending] = useActionState(createCategoryAction, null);
+export default function CategoryForm({ onCreated, category, edit }) {
+  const action = edit ? updateCategoryAction : createCategoryAction;
+  const [state, formAction, isPending] = useActionState(action, null);
 
   useEffect(() => {
     if (!state) return;
     if (state.success) {
       toast.success(state.message);
-      onCreated(state.category);
+      if (!edit) onCreated(state.category);
     } else {
       toast.error(state.error);
     }
   }, [state]);
 
-  if (category) {
+  if (!edit && category) {
     return (
       <div className="flex items-center gap-2 text-[13px] text-emerald-700">
         <RiCheckLine size={15} />
@@ -29,7 +30,9 @@ export default function CategoryForm({ onCreated, category }) {
   }
 
   return (
-    <form action={action} className="space-y-4">
+    <form action={formAction} className="space-y-4">
+      {edit && <input type="hidden" name="id" value={category?._id} />}
+
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
           <label className="text-[12px] font-medium text-gray-600">Name *</label>
@@ -37,6 +40,7 @@ export default function CategoryForm({ onCreated, category }) {
             name="name"
             placeholder="e.g. Vehicles"
             required
+            defaultValue={category?.name ?? ""}
             className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition"
           />
         </div>
@@ -44,19 +48,22 @@ export default function CategoryForm({ onCreated, category }) {
           <label className="text-[12px] font-medium text-gray-600">Icon (emoji)</label>
           <input
             name="icon"
-            placeholder="e.g. "
+            placeholder="e.g. 🚗"
+            defaultValue={category?.icon ?? ""}
             className="w-full px-3 py-2 text-[13px] border border-gray-200 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition"
           />
         </div>
       </div>
+
       {state?.error && <p className="text-[12px] text-red-500">{state.error}</p>}
+
       <button
         type="submit"
         disabled={isPending}
         className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 text-white text-[13px] font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors"
       >
-        <RiAddLine size={14} />
-        {isPending ? "Creating..." : "Create category"}
+        {edit ? <RiSaveLine size={14} /> : <RiAddLine size={14} />}
+        {isPending ? "Saving..." : edit ? "Save changes" : "Create category"}
       </button>
     </form>
   );

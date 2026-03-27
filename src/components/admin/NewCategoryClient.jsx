@@ -8,9 +8,21 @@ import { cn } from "@/lib/utils";
 
 function Section({ step, title, description, locked, children }) {
   return (
-    <div className={cn("bg-white rounded-xl border shadow-sm overflow-hidden transition-opacity", locked ? "border-gray-100 opacity-50 pointer-events-none" : "border-gray-200")}>
+    <div
+      className={cn(
+        "bg-white rounded-xl border shadow-sm overflow-hidden transition-opacity",
+        locked
+          ? "border-gray-100 opacity-50 pointer-events-none"
+          : "border-gray-200",
+      )}
+    >
       <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
-        <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold flex-shrink-0", locked ? "bg-gray-100 text-gray-400" : "bg-emerald-600 text-white")}>
+        <div
+          className={cn(
+            "w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-bold flex-shrink-0",
+            locked ? "bg-gray-100 text-gray-400" : "bg-emerald-600 text-white",
+          )}
+        >
           {step}
         </div>
         <div>
@@ -23,27 +35,46 @@ function Section({ step, title, description, locked, children }) {
   );
 }
 
-export default function NewCategoryClient() {
-  const [category, setCategory] = useState(null);
-  const [subcategories, setSubcategories] = useState([]);
+export default function NewCategoryClient({ defaultValues, edit }) {
+  const [category, setCategory] = useState(defaultValues?.category ?? null);
+  const [subcategories, setSubcategories] = useState(
+    defaultValues?.subcategories ?? [],
+  );
 
   return (
-    <div className="space-y-5 max-w-2xl">
+    <div className="space-y-5 max-w-2xl mx-auto">
       <Section step={1} title="Category" description="Name and icon">
-        <CategoryForm category={category} onCreated={setCategory} />
+        <CategoryForm category={category} edit={edit} onCreated={setCategory} />
       </Section>
 
-      <Section step={2} title="Subcategories" description="Add subcategories to this category" locked={!category}>
+      <Section
+        step={2}
+        title="Subcategories"
+        description="Add subcategories to this category"
+        locked={!category}
+      >
         <SubcategoryForm
           categoryId={category?._id}
           subcategories={subcategories}
           onCreated={(sub) => setSubcategories((prev) => [...prev, sub])}
+          onDeleted={(id) =>
+            setSubcategories((prev) => prev.filter((s) => s._id !== id))
+          }
           locked={!category}
         />
       </Section>
 
-      <Section step={3} title="Field templates" description="Add custom fields per subcategory" locked={subcategories.length === 0}>
-        <FieldForm subcategories={subcategories} locked={subcategories.length === 0} />
+      <Section
+        step={3}
+        title="Field templates"
+        description="Add custom fields per subcategory"
+        locked={subcategories.length === 0}
+      >
+        <FieldForm
+          subcategories={subcategories}
+          locked={subcategories.length === 0}
+          edit={edit}
+        />
       </Section>
     </div>
   );

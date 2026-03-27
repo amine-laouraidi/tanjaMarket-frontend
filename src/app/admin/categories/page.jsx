@@ -1,7 +1,7 @@
 import { authFetch } from "@/lib/authFetch";
 import DeleteCategoryButton from "@/components/admin/DeleteCategoryButton";
 import Link from "next/link";
-import { RiAddLine, RiPriceTagLine } from "react-icons/ri";
+import { RiAddLine, RiPriceTagLine, RiEditLine } from "react-icons/ri";
 
 export const metadata = { title: "Categories — TanjaMarket Admin" };
 
@@ -23,7 +23,7 @@ export default async function AdminCategoriesPage() {
           <p className="text-[13px] text-gray-400 mt-0.5">{categories.length} categories total</p>
         </div>
         <Link
-          href="/admin/categories/add"
+          href="/admin/categories/new"
           className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-600 text-white text-[13px] font-medium hover:bg-emerald-700 transition-colors"
         >
           <RiAddLine size={15} />
@@ -81,7 +81,14 @@ export default async function AdminCategoriesPage() {
                   </td>
                   {/* Actions */}
                   <td className="px-4 py-3">
-                    <div className="flex items-center justify-end">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Link
+                        href={`/admin/categories/add?action=edit&id=${cat._id}`}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12px] font-medium text-gray-600 hover:bg-gray-100 border border-gray-200 transition-colors"
+                      >
+                        <RiEditLine size={13} />
+                        Edit
+                      </Link>
                       <DeleteCategoryButton categoryId={cat._id} />
                     </div>
                   </td>

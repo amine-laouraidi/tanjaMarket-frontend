@@ -13,7 +13,6 @@ const titles = {
   "/admin/users": "All Users",
   "/admin/users/banned": "Banned Users",
   "/admin/categories": "Categories",
-  "/admin/categories/new": "Add Category",
 };
 
 export default function Topbar() {
@@ -36,11 +35,6 @@ export default function Topbar() {
           <RiNotification3Line size={15} className="text-gray-500" />
           <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 border-2 border-white" />
         </button>
-
-        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white text-[12px] h-7 px-3 gap-1">
-          <RiAddLine size={13} />
-          New category
-        </Button>
       </div>
     </header>
   );

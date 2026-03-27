@@ -1,22 +1,33 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { createSubcategoryAction } from "@/app/actions/adminCatalog";
+import { createSubcategoryAction, deleteSubcategoryAction } from "@/app/actions/adminCatalog";
 import { toast } from "sonner";
-import { RiAddLine, RiCheckLine } from "react-icons/ri";
+import { RiAddLine, RiCheckLine, RiDeleteBinLine } from "react-icons/ri";
 
-export default function SubcategoryForm({ categoryId, subcategories, onCreated, locked }) {
-  const [state, action, isPending] = useActionState(createSubcategoryAction, null);
+export default function SubcategoryForm({ categoryId, subcategories, onCreated, onDeleted, locked }) {
+  const [createState, createAction, isCreating] = useActionState(createSubcategoryAction, null);
+  const [deleteState, deleteAction, isDeleting] = useActionState(deleteSubcategoryAction, null);
 
   useEffect(() => {
-    if (!state) return;
-    if (state.success) {
-      toast.success(state.message);
-      onCreated(state.subcategory);
+    if (!createState) return;
+    if (createState.success) {
+      toast.success(createState.message);
+      onCreated(createState.subcategory);
     } else {
-      toast.error(state.error);
+      toast.error(createState.error);
     }
-  }, [state]);
+  }, [createState]);
+
+  useEffect(() => {
+    if (!deleteState) return;
+    if (deleteState.success) {
+      toast.success(deleteState.message);
+      onDeleted(deleteState.id);
+    } else {
+      toast.error(deleteState.error);
+    }
+  }, [deleteState]);
 
   return (
     <div className="space-y-4">
@@ -26,17 +37,27 @@ export default function SubcategoryForm({ categoryId, subcategories, onCreated, 
             <span key={sub._id} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[12px] font-medium">
               <RiCheckLine size={11} />
               {sub.name}
+              <form action={deleteAction}>
+                <input type="hidden" name="id" value={sub._id} />
+                <button
+                  type="submit"
+                  disabled={isDeleting || locked}
+                  className="ml-0.5 text-emerald-400 hover:text-red-500 disabled:opacity-40 transition-colors"
+                >
+                  <RiDeleteBinLine size={11} />
+                </button>
+              </form>
             </span>
           ))}
         </div>
       )}
 
-      <form action={action} className="flex items-end gap-3">
+      <form action={createAction} className="flex items-end gap-3">
         <input type="hidden" name="categoryId" value={categoryId} />
         <div className="flex-1 space-y-1">
           <label className="text-[12px] font-medium text-gray-600">Subcategory name *</label>
           <input
-            key={state?.success ? Date.now() : "sub"}
+            key={createState?.success ? Date.now() : "sub"}
             name="name"
             placeholder="e.g. Cars"
             required
@@ -46,14 +67,15 @@ export default function SubcategoryForm({ categoryId, subcategories, onCreated, 
         </div>
         <button
           type="submit"
-          disabled={isPending || locked}
+          disabled={isCreating || locked}
           className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 text-white text-[13px] font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors"
         >
           <RiAddLine size={14} />
-          {isPending ? "Adding..." : "Add"}
+          {isCreating ? "Adding..." : "Add"}
         </button>
       </form>
-      {state?.error && <p className="text-[12px] text-red-500">{state.error}</p>}
+
+      {createState?.error && <p className="text-[12px] text-red-500">{createState.error}</p>}
     </div>
   );
 }

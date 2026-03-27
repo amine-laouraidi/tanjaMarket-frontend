@@ -39,7 +39,7 @@ const navItems = [
     section: "Categories (catalog)",
     links: [
       { label: "All categories", href: "/admin/categories", icon: RiPriceTagLine },
-      { label: "Add category", href: "/admin/categories/new", icon: RiAddLine },
+      { label: "Add category", href: "/admin/categories/add", icon: RiAddLine },
     ],
   },
 ];
