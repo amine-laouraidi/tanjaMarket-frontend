@@ -10,14 +10,14 @@ const stats = [
     icon: RiFileListLine,
     color: "emerald",
   },
-  {
-    label: "Pending review",
-    value: "5",
-    sub: "needs action",
-    trend: "warn",
-    icon: RiTimeLine,
-    color: "amber",
-  },
+  // {
+  //   label: "Pending review",
+  //   value: "5",
+  //   sub: "needs action",
+  //   trend: "warn",
+  //   icon: RiTimeLine,
+  //   color: "amber",
+  // },
   {
     label: "Total users",
     value: "1,284",
@@ -51,7 +51,7 @@ const iconBg = {
 
 export default function StatsCards() {
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-3 gap-3">
       {stats.map(({ label, value, sub, trend, icon: Icon, color }) => (
         <div
           key={label}

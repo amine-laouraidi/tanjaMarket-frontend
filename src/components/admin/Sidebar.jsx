@@ -24,15 +24,15 @@ const navItems = [
     section: "Ads",
     links: [
       { label: "All ads", href: "/admin/ads", icon: RiFileListLine },
-      { label: "Pending review", href: "/admin/ads/pending", icon: RiTimeLine },
-      { label: "Bulk delete", href: "/admin/ads/bulk-delete", icon: RiDeleteBinLine },
+      // { label: "Pending review", href: "/admin/ads/pending", icon: RiTimeLine },
+      // { label: "Bulk delete", href: "/admin/ads/bulk-delete", icon: RiDeleteBinLine },
     ],
   },
   {
     section: "Users",
     links: [
       { label: "All users", href: "/admin/users", icon: RiUserLine },
-      { label: "Banned users", href: "/admin/users/banned", icon: RiUserForbidLine },
+      // { label: "Banned users", href: "/admin/users/banned", icon: RiUserForbidLine },
     ],
   },
   {

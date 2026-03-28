@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { createSubcategoryAction, deleteSubcategoryAction } from "@/app/actions/adminCatalog";
+import { createSubcategoryAction, deleteSubcategoryAction } from "@/app/actions/adminSubCategories";
 import { toast } from "sonner";
 import { RiAddLine, RiCheckLine, RiDeleteBinLine } from "react-icons/ri";
 

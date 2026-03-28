@@ -59,9 +59,7 @@ export default async function AdminCategoriesPage() {
                   {/* Category */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-lg flex-shrink-0">
-                        {cat.icon ?? <RiPriceTagLine size={15} className="text-emerald-500" />}
-                      </div>
+                     
                       <p className="font-medium text-gray-800">{cat.name}</p>
                     </div>
                   </td>

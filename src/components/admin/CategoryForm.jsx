@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { createCategoryAction, updateCategoryAction } from "@/app/actions/adminCatalog";
+import { createCategoryAction, updateCategoryAction } from "@/app/actions/adminCategories";
 import { toast } from "sonner";
 import { RiCheckLine, RiSaveLine, RiAddLine } from "react-icons/ri";
 

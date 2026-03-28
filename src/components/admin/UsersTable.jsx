@@ -3,6 +3,7 @@ import BanUserButton from "@/components/admin/BanUserButton";
 import DeleteUserButton from "@/components/admin/DeleteUserButton";
 import { RiUserLine, RiUserForbidLine, RiTimeLine } from "react-icons/ri";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 async function getUsers(filters) {
   const params = new URLSearchParams();
@@ -13,7 +14,8 @@ async function getUsers(filters) {
   const res = await authFetch(`/admin/users?${params.toString()}`, {
     cache: "no-store",
   });
-  if (!res || !res.ok) return { data: [], pagination: { total: 0, page: 1, pages: 1 } };
+  if (!res || !res.ok)
+    return { data: [], pagination: { total: 0, page: 1, pages: 1 } };
   return res.json();
 }
 
@@ -29,7 +31,12 @@ function StatusBadge({ status }) {
     suspended: <RiTimeLine size={10} />,
   };
   return (
-    <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border", styles[status])}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
+        styles[status],
+      )}
+    >
       {icons[status]}
       {status}
     </span>
@@ -41,7 +48,9 @@ export default async function UsersTable({ filters }) {
 
   if (!users.length) {
     return (
-      <p className="text-[13px] text-gray-400 py-8 text-center">No users found.</p>
+      <p className="text-[13px] text-gray-400 py-8 text-center">
+        No users found.
+      </p>
     );
   }
 
@@ -51,22 +60,27 @@ export default async function UsersTable({ filters }) {
         <table className="w-full text-[13px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/60">
-              {["User", "Phone", "Ads", "Status", "Joined", "Actions"].map((h) => (
-                <th
-                  key={h}
-                  className={cn(
-                    "px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400",
-                    h === "Actions" ? "text-right" : "text-left"
-                  )}
-                >
-                  {h}
-                </th>
-              ))}
+              {["User", "Phone", "Ads", "Status", "Joined", "Actions"].map(
+                (h) => (
+                  <th
+                    key={h}
+                    className={cn(
+                      "px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400",
+                      h === "Actions" ? "text-right" : "text-left",
+                    )}
+                  >
+                    {h}
+                  </th>
+                ),
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {users.map((user) => (
-              <tr key={user._id} className="hover:bg-gray-50/50 transition-colors">
+              <tr
+                key={user._id}
+                className="hover:bg-gray-50/50 transition-colors"
+              >
                 {/* User */}
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
@@ -74,18 +88,27 @@ export default async function UsersTable({ filters }) {
                       {user.fullName?.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-800 leading-tight">{user.fullName}</p>
-                      <p className="text-[11px] text-gray-400 mt-0.5">{user.email}</p>
+                      <p className="font-medium text-gray-800 leading-tight">
+                        {user.fullName}
+                      </p>
+                      <p className="text-[11px] text-gray-400 mt-0.5">
+                        {user.email}
+                      </p>
                     </div>
                   </div>
                 </td>
                 {/* Phone */}
-                <td className="px-4 py-3 text-gray-500 text-[12px]">{user.phone ?? "—"}</td>
+                <td className="px-4 py-3 text-gray-500 text-[12px]">
+                  {user.phone ?? "—"}
+                </td>
                 {/* Ads */}
                 <td className="px-4 py-3">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-600 text-[11px] font-semibold">
+                  <Link
+                    href={`/admin/ads?user=${user._id}`}
+                    className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-600 text-[11px] font-semibold hover:bg-emerald-100 hover:text-emerald-700 transition-colors"
+                  >
                     {user.adsCount}
-                  </span>
+                  </Link>
                 </td>
                 {/* Status */}
                 <td className="px-4 py-3">
@@ -102,7 +125,10 @@ export default async function UsersTable({ filters }) {
                 {/* Actions */}
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-1.5">
-                    <BanUserButton userId={user._id} currentStatus={user.status} />
+                    <BanUserButton
+                      userId={user._id}
+                      currentStatus={user.status}
+                    />
                     <DeleteUserButton userId={user._id} />
                   </div>
                 </td>
@@ -114,7 +140,9 @@ export default async function UsersTable({ filters }) {
 
       {pagination.pages > 1 && (
         <div className="border-t border-gray-100 px-4 py-3 flex items-center justify-between text-[12px] text-gray-400 bg-gray-50/40">
-          <span>Page {pagination.page} of {pagination.pages}</span>
+          <span>
+            Page {pagination.page} of {pagination.pages}
+          </span>
           <span>{pagination.total} total users</span>
         </div>
       )}
