@@ -10,6 +10,7 @@ export default async function ListingsGrid({ filters }) {
   if (filters?.quartier) params.set("quartier", filters.quartier);
   if (filters?.minPrice) params.set("minPrice", filters.minPrice);
   if (filters?.maxPrice) params.set("maxPrice", filters.maxPrice);
+  if (filters?.page) params.set("page", filters.page);
 
   const [adsRes, savedRes] = await Promise.all([
     fetch(`${process.env.BACKEND_URL}/ads?${params.toString()}`, { cache: "no-store" }),

@@ -34,7 +34,7 @@ export default function SavedPageClient({ initialAds }) {
             Sauvegardez des annonces qui vous intéressent pour les retrouver facilement ici.
           </p>
           <Button asChild variant="outline" size="sm">
-            <Link href="/listings">Parcourir les annonces</Link>
+            <Link href="/">Parcourir les annonces</Link>
           </Button>
         </div>
       ) : (
