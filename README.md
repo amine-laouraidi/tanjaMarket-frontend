@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# TanjaMarket — Backend
 
-## Getting Started
+REST API for TanjaMarket, a classified ads platform for Tanger, Morocco.
 
-First, run the development server:
+🔗 **Frontend:** [tanja-market-frontend.vercel.app](https://tanja-market-frontend.vercel.app)  
+🔗 **Frontend Repo:** [tanjaMarket-frontend](https://github.com/amine-laouraidi/tanjaMarket-frontend)
+
+---
+
+## Tech
+
+- **Node.js / Express.js**
+- **MongoDB / Mongoose**
+- **JWT** with refresh tokens
+- **Zod** for request validation
+- **Cloudinary** for image storage (URLs sent from frontend)
+
+## Security
+
+- `helmet` — HTTP headers protection
+- `express-mongo-sanitize` — NoSQL injection prevention
+- `xss-clean` — XSS attack prevention
+- `cors` — restricted to frontend origin
+- `express-rate-limit` — rate limiting on all routes
+- `cookie-parser` — secure cookie handling
+
+---
+
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/amine-laouraidi/TanjaMarket-Backend.git
+cd TanjaMarket-Backend
+npm install
+npm run server
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create a `.env` file:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```env
+NODE_ENV=development
+PORT=5000
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_secret
+JWT_REFRESH_SECRET=your_refresh_secret
+CLIENT_URL=http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## API Overview
 
-To learn more about Next.js, take a look at the following resources:
+**Auth** — register, login, logout, refresh token, update profile
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Ads** — create, read, update, delete, get by user
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Categories / Subcategories** — browse ads by category
 
-## Deploy on Vercel
+**Fields** — dynamic field templates per category
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Saved Ads** — save and unsave ads
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Admin** — manage users and ads
+
+---
+
+## Notes
+
+This is a portfolio project — still a work in progress. Feedback is welcome.
