@@ -1,5 +1,4 @@
 
-import { v2 as cloudinary } from "cloudinary";
 import cloudinary from "@/lib/cloudinary";
 
 export async function GET() {
