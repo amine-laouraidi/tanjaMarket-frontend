@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { registerSchema } from "@/lib/UserValidationSchemas";
+import { ACCESS_OPTS, REFRESH_OPTS } from "@/lib/cookie";
+import { cookies } from "next/headers";
 
 export default async function register(prevState, formData) {
   const result = registerSchema.safeParse({
@@ -39,6 +41,9 @@ export default async function register(prevState, formData) {
         },
       };
     }
+    const cookieStore = await cookies();
+    cookieStore.set("accessToken", json.accessToken, ACCESS_OPTS);
+    cookieStore.set("refreshToken", json.refreshToken, REFRESH_OPTS);
   } catch (e) {
     if (e.cause?.code === "ECONNREFUSED") {
       return {
