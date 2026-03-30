@@ -1,66 +1,72 @@
-# TanjaMarket — Backend
+# TanjaMarket
 
-REST API for TanjaMarket, a classified ads platform for Tanger, Morocco.
+A classified ads platform for Tanger, Morocco. Users can post, search and browse ads across multiple categories.
 
-🔗 **Frontend:** [tanja-market-frontend.vercel.app](https://tanja-market-frontend.vercel.app)  
-🔗 **Frontend Repo:** [tanjaMarket-frontend](https://github.com/amine-laouraidi/tanjaMarket-frontend)
+🔗 **Live:** [tanja-market-frontend.vercel.app](https://tanja-market-frontend.vercel.app)  
+🔗 **Backend:** [TanjaMarket-Backend](https://github.com/amine-laouraidi/TanjaMarket-Backend)
+
+---
+
+## Screenshots
+
+### Admin dashboard
+![Admin dashboard](./screenshots/admin-dashboard.png)
+
+### Admin — All ads
+![Admin ads](./screenshots/admin-ads.png)
+
+### Admin — Users
+![Admin users](./screenshots/admin-users.png)
+
+### Admin — Categories
+![Admin categories](./screenshots/admin-categories.png)
+
+---
+
+## What I built
+
+I built this project to practice building a full stack app from scratch. The idea came from wanting something like Avito.ma but focused on Tanger.
+
+Users can:
+- Create an account and post ads
+- Browse and search ads by category, price or location
+- Save ads they're interested in
+- Contact sellers via WhatsApp or phone
+- Manage their profile and their ads
+
+Admins can:
+- View dashboard stats (total ads, users, banned accounts)
+- Manage all ads (approve, reject, delete)
+- Manage all users (ban, delete)
+- Manage categories and subcategories
+- Add custom field templates per subcategory (brand, fuel type, etc.)
 
 ---
 
 ## Tech
 
-- **Node.js / Express.js**
-- **MongoDB / Mongoose**
-- **JWT** with refresh tokens
-- **Zod** for request validation
-- **Cloudinary** for image storage (URLs sent from frontend)
-
-## Security
-
-- `helmet` — HTTP headers protection
-- `express-mongo-sanitize` — NoSQL injection prevention
-- `xss-clean` — XSS attack prevention
-- `cors` — restricted to frontend origin
-- `express-rate-limit` — rate limiting on all routes
-- `cookie-parser` — secure cookie handling
+- **Next.js** (App Router)
+- **Tailwind CSS**
+- **shadcn/ui**
 
 ---
 
 ## Run locally
 
 ```bash
-git clone https://github.com/amine-laouraidi/TanjaMarket-Backend.git
-cd TanjaMarket-Backend
+git clone https://github.com/amine-laouraidi/tanjaMarket-frontend.git
+cd tanjaMarket-frontend
 npm install
-npm run server
+npm run dev
 ```
 
-Create a `.env` file:
+Create a `.env.local` file:
 
 ```env
-NODE_ENV=development
-PORT=5000
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_secret
-JWT_REFRESH_SECRET=your_refresh_secret
-CLIENT_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+BACKEND_URL=http://localhost:5000/api
+NEXT_PUBLIC_DOMAIN=http://localhost:3000
 ```
-
----
-
-## API Overview
-
-**Auth** — register, login, logout, refresh token, update profile
-
-**Ads** — create, read, update, delete, get by user
-
-**Categories / Subcategories** — browse ads by category
-
-**Fields** — dynamic field templates per category
-
-**Saved Ads** — save and unsave ads
-
-**Admin** — manage users and ads
 
 ---
 
